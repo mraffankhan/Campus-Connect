@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { PrismaClient, Role, ClubStatus, MemberRole, MemberStatus, EventStatus, RegistrationStatus, CheckInMethod } from "@prisma/client";
 
 const prisma = new PrismaClient();

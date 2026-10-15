@@ -18,9 +18,11 @@ import { MobileNav } from "./mobile-nav";
 import { Badge } from "@/components/ui/badge";
 import { getInitials } from "@/lib/utils";
 import { logout } from "@/actions/auth";
+import { DemoPersonaSwitcher } from "./demo-persona-switcher";
 
 interface TopbarProps {
   user: {
+    id?: string;
     name: string;
     email: string;
     role: string;
@@ -49,6 +51,13 @@ export function Topbar({ user, notificationCount = 0 }: TopbarProps) {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2">
+          {/* Demo Persona Switcher */}
+          <DemoPersonaSwitcher
+            currentUserId={user.id}
+            currentRole={user.role}
+            currentName={user.name}
+          />
+
           <ThemeToggle />
 
           {/* Notifications */}

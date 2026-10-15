@@ -23,6 +23,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "cn": "^0.4.0",
+    "dotenv": "^18.0.8",
     "html5-qrcode": "^2.3.8",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^1.57.0",
