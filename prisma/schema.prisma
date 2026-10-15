@@ -1,0 +1,216 @@
+// CampusConnect – Prisma Schema
+// All models for the College Club Portal
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── Enums ──────────────────────────────────────────────
+
+enum Role {
+  STUDENT
+  CLUB_ADMIN
+  SUPER_ADMIN
+}
+
+enum ClubStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+enum MemberRole {
+  MEMBER
+  COORDINATOR
+  LEAD
+}
+
+enum MemberStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  COMPLETED
+}
+
+enum RegistrationStatus {
+  CONFIRMED
+  WAITLISTED
+  CANCELLED
+}
+
+enum CheckInMethod {
+  QR
+  MANUAL
+}
+
+// ─── Models ─────────────────────────────────────────────
+
+model User {
+  id         String   @id @default(cuid())
+  name       String
+  email      String   @unique
+  role       Role     @default(STUDENT)
+  department String?
+  year       Int?
+  avatarUrl  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Supabase Auth link
+  supabaseId String? @unique
+
+  // Relations
+  memberships   Membership[]
+  registrations Registration[]
+  attendances   Attendance[]
+  announcements Announcement[]  @relation("AuthoredAnnouncements")
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model Club {
+  id          String     @id @default(cuid())
+  name        String
+  slug        String     @unique
+  description String?
+  category    String?
+  logoUrl     String?
+  status      ClubStatus @default(PENDING)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  memberships   Membership[]
+  events        Event[]
+  announcements Announcement[]
+
+  @@map("clubs")
+}
+
+model Membership {
+  id       String       @id @default(cuid())
+  userId   String
+  clubId   String
+  role     MemberRole   @default(MEMBER)
+  status   MemberStatus @default(PENDING)
+  joinedAt DateTime     @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, clubId])
+  @@index([clubId])
+  @@index([userId])
+  @@map("memberships")
+}
+
+model Event {
+  id                   String      @id @default(cuid())
+  clubId               String
+  title                String
+  description          String?
+  venue                String?
+  startsAt             DateTime
+  endsAt               DateTime
+  capacity             Int?
+  registrationDeadline DateTime?
+  status               EventStatus @default(DRAFT)
+  isMembersOnly        Boolean     @default(false)
+  bannerUrl            String?
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+
+  // Relations
+  club          Club           @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  registrations Registration[]
+  attendances   Attendance[]
+
+  @@index([clubId])
+  @@index([startsAt])
+  @@map("events")
+}
+
+model Registration {
+  id           String             @id @default(cuid())
+  eventId      String
+  userId       String
+  status       RegistrationStatus @default(CONFIRMED)
+  registeredAt DateTime           @default(now())
+
+  // Relations
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+  @@index([eventId])
+  @@index([userId])
+  @@map("registrations")
+}
+
+model Attendance {
+  id          String        @id @default(cuid())
+  eventId     String
+  userId      String
+  checkedInAt DateTime      @default(now())
+  method      CheckInMethod @default(QR)
+  markedBy    String?
+
+  // Relations
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+  @@index([eventId])
+  @@index([userId])
+  @@map("attendances")
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  clubId    String?  // null = college-wide
+  authorId  String
+  title     String
+  body      String
+  pinned    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  club   Club? @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  author User  @relation("AuthoredAnnouncements", fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([clubId])
+  @@index([authorId])
+  @@map("announcements")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("notifications")
+}
