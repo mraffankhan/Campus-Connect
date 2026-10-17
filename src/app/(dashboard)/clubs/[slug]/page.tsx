@@ -273,7 +273,7 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
                       {ann.body}
                     </p>
                     <p className="text-[11px] text-muted-foreground pt-1">
-                      Posted by {ann.author.name} • {formatDate(new Date(ann.createdAt))}
+                      Posted by {ann.author?.name || "Club Lead"} • {formatDate(new Date(ann.createdAt))}
                     </p>
                   </div>
                 ))

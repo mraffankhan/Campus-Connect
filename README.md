@@ -1,52 +1,115 @@
-# CampusConnect – College Club Portal
+<div align="center">
 
-CampusConnect is a full-stack campus organization portal built for universities. It connects students to student chapters and interest societies, streamlines event registrations with capacity and waitlist management, issues signed QR code admission tickets, provides live camera scanning for club check-in desks, and offers multi-tier role dashboards for students, club coordinators, and university administrators.
+# 🎓 CampusConnect – Modern College Club & Event Portal
 
----
+**A production-ready, full-stack campus organization platform empowering universities to manage student societies, automate event registrations with FIFO waitlists, issue signed tamper-proof QR tickets, and streamline live check-ins.**
 
-## 🚀 Tech Stack
+[![Next.js](https://img.shields.io/badge/Next.js-16.4-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.3-blue?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Prisma](https://img.shields.io/badge/Prisma-6.19-2D3748?style=for-the-badge&logo=prisma&logoColor=white)](https://www.prisma.io/)
+[![Supabase](https://img.shields.io/badge/Supabase-Auth_%26_PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-| Layer | Technology |
-|---|---|
-| **Framework** | [Next.js 16](https://nextjs.org/) (App Router, Server Actions, Route Handlers) |
-| **Language** | [TypeScript](https://www.typescriptlang.org/) (Strict typing across schema & client) |
-| **Styling & UI** | [Tailwind CSS v4](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/) / [Base UI](https://base-ui.com/) |
-| **Theme** | Indigo/Violet palette with dark mode support (`next-themes`) |
-| **Database** | [Supabase](https://supabase.com/) PostgreSQL + [Prisma ORM](https://www.prisma.io/) |
-| **Auth** | Supabase Auth (Email & Password, college email domain restriction) |
-| **Validation** | [Zod](https://zod.dev/) + [React Hook Form](https://react-hook-form.com/) |
-| **QR System** | `qrcode` (Ticket generation) + `html5-qrcode` (Live camera check-in) + `jsonwebtoken` (Tamper-proof tickets) |
-| **Testing** | Node.js native test runner (`node:test`, `ts-node`) |
-| **Deployment Target** | [Vercel](https://vercel.com/) |
+[Features](#-key-features) • [Quick Start](#-quick-start) • [Interactive Demo Mode](#-instant-interactive-demo-mode) • [Architecture](#-system-architecture) • [Database Schema](#-database-schema) • [API & Workflows](#-workflows--security) • [Testing](#-automated-testing)
+
+</div>
 
 ---
 
-## 🏛️ Roles and Permissions
+## 🌟 Overview
 
-| Role | Permissions & Access Scope |
-|---|---|
-| **STUDENT** | Browse active clubs, request to join clubs, register for public & member-only events, view own digital QR passes, view own attendance percentage, receive in-app notifications, and view announcement feeds. |
-| **CLUB_ADMIN** | Manage only their assigned club(s): review & approve/reject membership requests, promote/demote member roles (`MEMBER`, `COORDINATOR`, `LEAD`), create & cancel events, launch live QR camera scanner & manual attendance desk, export CSV attendance sheets, and post club announcements. |
-| **SUPER_ADMIN** | Approve or suspend club creation applications, manage all campus user roles, post college-wide broadcasts to all enrolled students, and view campus-wide analytics (turnout rates, active clubs, registrations). |
+Universities host dozens of student organizations and hundreds of campus events each semester. Managing club memberships, venue capacities, paper sign-ins, and club communications is often fragmented across spreadsheets and chat apps.
 
-*Permissions are enforced on 3 layers: Edge Middleware (`src/middleware.ts`), Server Action guards (`requireRole`, `requireClubAdmin`, `requireClubMember`), and database foreign-key constraints.*
+**CampusConnect** solves this with an integrated, university-grade web platform featuring:
+- **Multi-Tiered RBAC**: Distinct interfaces and security boundaries for **Students**, **Club Coordinators & Leads**, and **University Administrators (Deans)**.
+- **Smart Event Ticketing**: Hard capacity caps, automatic **FIFO Waitlisting**, and instant promotion when confirmed attendees cancel.
+- **Secure QR Admission**: High-definition digital passes signed cryptographically with time-bound JWT tokens.
+- **Live Camera Check-In Desk**: In-browser QR code scanner powered by `html5-qrcode` with duplicate prevention and manual override capabilities.
+- **Official Announcement Feed**: Club-specific announcements alongside campus-wide broadcasts with pin-to-top support.
+- **Zero-Setup Interactive Demo Mode**: Instant one-click persona switcher allowing anyone to test all 3 roles immediately without configuring a database.
 
 ---
 
-## 📊 Database Schema (Prisma)
+## ✨ Key Features
+
+### 1. 🏛️ Club Directory & Lifecycle Management
+- **Search & Categorization**: Discover clubs by interest category (Technology, Arts & Culture, Sports, Academic, Social Impact) with instant text search.
+- **Club Creation Proposals**: Students submit proposals with descriptions and categories; proposals remain `PENDING` until reviewed and approved by University Deans.
+- **Membership Approval Workflow**: Club leads review join applications, approve/reject students, and assign leadership positions (`MEMBER`, `COORDINATOR`, `LEAD`).
+- **Student Club Hub**: Dedicated view (`/my-clubs`) showing joined clubs, leadership responsibilities, and pending application statuses.
+
+### 2. 🎟️ Intelligent Event Management & Automatic Waitlisting
+- **Configurable Access Rules**: Public campus events or exclusive `isMembersOnly` club workshops.
+- **Capacity Enforcement**: Real-time seat tracking with registration deadlines.
+- **Automated Waitlist Engine**: Once capacity is reached, new registrants are queued in a First-In, First-Out (FIFO) waitlist.
+- **Instant Auto-Promotion**: When a registered attendee cancels, the next waitlisted student is automatically promoted to `CONFIRMED` and receives an in-app alert.
+
+### 3. 📱 Signed QR Passes & Live Scanner Check-In Desk
+- **Cryptographically Signed QR Tickets**: Passes encode a tamper-proof JWT token signed with an HMAC secret (`/events/[id]/qr`), verifying student identity and registration validity.
+- **Browser-Based Scanner**: Organizers turn any smartphone, tablet, or laptop camera into an admission scanner (`/events/[id]/attendance`).
+- **Anti-Fraud & Replay Protection**: Detects duplicate scans, expired events, and invalid tickets in real time.
+- **Manual Check-In & Export**: Organizers can search and manually mark attendees, plus download timestamped `.csv` attendance rosters (`/api/attendance/export`).
+
+### 4. 📢 Broadcasts, Announcements & Notification Hub
+- **Multi-Level Feeds**: Pinned college-wide administrative alerts alongside club-specific feeds.
+- **Notification Inbox**: Instant notifications for ticket confirmations, waitlist promotions, club approval decisions, and event schedule adjustments.
+- **Email Domain Verification**: Restricted student onboarding enforcing official institutional domains (e.g. `@college.edu`).
+
+---
+
+## ⚡ Instant Interactive Demo Mode
+
+CampusConnect features a built-in **In-Memory Demo Mode with Zero External Dependencies**. You can launch and test all features without spinning up Supabase or PostgreSQL!
+
+### Switch Personas in One Click
+Use the floating **Persona Switcher** in the navigation bar to jump between three pre-configured campus roles:
+
+| Persona | Name | Role & Scope | What You Can Test |
+|---|---|---|---|
+| 🎓 **Student** | Liam Johnson | `STUDENT` (Freshman, CS) | Browse clubs, request membership, register for events, view personal QR passes, cancel bookings |
+| 🛠️ **Club Lead** | Sarah Chen | `CLUB_ADMIN` (ACM President) | Review member applications, create new events, launch camera QR scanner, export attendance CSV |
+| 🛡️ **Dean / Admin** | Dr. Evelyn Vance | `SUPER_ADMIN` (Dean of Students) | Approve/reject pending club proposals, post campus broadcasts, view system-wide metrics |
+
+> **Note**: In demo mode, all mutations (creating events, approving members, check-ins) execute in an active in-memory session. When Supabase & PostgreSQL credentials are provided, CampusConnect seamlessly switches to production database operations.
+
+---
+
+## 🛠️ Tech Stack & Architecture
+
+### Core Technologies
+
+| Layer | Technology | Details |
+|---|---|---|
+| **Framework** | [Next.js 16.4](https://nextjs.org/) | App Router, Server Actions, Route Handlers, Turbopack |
+| **Language** | [TypeScript 5](https://www.typescriptlang.org/) | Strict type safety across client, server, and schemas |
+| **UI & Styling** | [Tailwind CSS v4](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/) | Modern design system, accessible components, Radix/Base UI |
+| **Theme** | [next-themes](https://github.com/pacocoursey/next-themes) | System-aware Dark & Light mode with vibrant Indigo accents |
+| **Database & ORM** | [Prisma 6.19](https://www.prisma.io/) + [PostgreSQL](https://www.postgresql.org/) | Connection pooling, typed queries, automated migrations |
+| **Authentication** | [Supabase Auth](https://supabase.com/) | SSR auth with `@supabase/ssr`, cookie sessions, domain enforcement |
+| **QR Code Engine** | `qrcode` + `jsonwebtoken` + `html5-qrcode` | Tamper-proof signed passes & camera scanning pipeline |
+| **Validation** | [Zod 4](https://zod.dev/) + [React Hook Form](https://react-hook-form.com/) | Schema-driven form handling and API input validation |
+| **Notifications** | [Sonner](https://sonner.emilkowal.ski/) | Modern toast notifications and persistent activity log |
+| **Testing** | Node.js Test Runner (`ts-node`) | Automated unit & integration tests |
+
+---
+
+## 📊 Database Schema
 
 ```mermaid
 erDiagram
-    User ||--o{ Membership : "has"
-    User ||--o{ Registration : "registers"
-    User ||--o{ Attendance : "attends"
-    User ||--o{ Announcement : "authors"
+    User ||--o{ Membership : "holds"
+    User ||--o{ Registration : "makes"
+    User ||--o{ Attendance : "logs"
+    User ||--o{ Announcement : "publishes"
     User ||--o{ Notification : "receives"
     Club ||--o{ Membership : "has"
     Club ||--o{ Event : "hosts"
-    Club ||--o{ Announcement : "has"
-    Event ||--o{ Registration : "has"
-    Event ||--o{ Attendance : "tracks"
+    Club ||--o{ Announcement : "issues"
+    Event ||--o{ Registration : "contains"
+    Event ||--o{ Attendance : "records"
 
     User {
         String id PK
@@ -113,7 +176,7 @@ erDiagram
 
     Announcement {
         String id PK
-        String clubId FK "nullable = college-wide"
+        String clubId FK "nullable = college broadcast"
         String authorId FK
         String title
         String body
@@ -134,111 +197,179 @@ erDiagram
 
 ---
 
-## ✨ Feature Highlights
+## 🔒 Security & RBAC Enforcement
 
-### 1. Club Management & Memberships
-- **Searchable Directory**: Browse student chapters by category (Technology, Arts & Culture, Sports, etc.) and search keywords.
-- **Club Request Flow**: Students submit proposals to create a club (`/clubs/new`). New clubs remain `PENDING` until a Super Admin approves them (`/admin/clubs`).
-- **Join & Review Workflow**: Students submit join requests; club leads and coordinators approve or reject applicants, assign coordinator roles, or remove members (`/clubs/[slug]/members`).
-- **My Clubs**: Dedicated student dashboard displaying active and pending memberships (`/my-clubs`).
+CampusConnect protects access across three independent layers:
 
-### 2. Events, Capacity & Automatic Waitlist
-- **Public & Members-Only Events**: Club admins configure capacity limits, registration deadlines, and the `isMembersOnly` flag.
-- **Automated Waitlisting**: When confirmed registrations reach capacity, new registrants are placed in the FIFO waitlist.
-- **Auto-Promotion on Cancellation**: When a confirmed student cancels their ticket, the oldest waitlisted student is immediately promoted to `CONFIRMED`, and an in-app alert is generated.
-- **My Events**: Student dashboard displaying upcoming bookings and historical attendance record (`/my-events`).
-
-### 3. QR Code Fast Check-In & Attendance Desk
-- **Signed Digital Tickets**: Confirmed participants receive a signed, time-limited JWT pass encoded as an HD QR code (`/events/[id]/qr`).
-- **Live Camera Scanner**: Club organizers launch the camera scanner (`/events/[id]/attendance`) powered by `html5-qrcode`.
-- **Duplicate & Rate Protection**: Scans are verified via `/api/attendance/check-in`, checking event status, registration validity, and preventing duplicate check-ins.
-- **Manual Override & CSV Export**: Check-in organizers can manually mark attendees or export the attendance roster as a `.csv` file (`/api/attendance/export`).
-
-### 4. Announcements & Activity Notifications
-- **Combined Student Feed**: College-wide official notices and club-specific announcements with pin-to-top support (`/announcements`).
-- **Admin Broadcast Center**: Super Admins post campus-wide notices (`/admin/announcements`).
-- **In-App Notification Inbox**: Real-time alerts for club approvals, waitlist promotions, schedule changes, and unread badges in the header bar (`/notifications`).
+1. **Edge Middleware (`src/middleware.ts`)**:
+   - Inspects Supabase session cookies on incoming requests.
+   - Redirects unauthenticated visitors to `/login`.
+   - Restricts `/admin/*` routes to `SUPER_ADMIN` and validates club admin parameters.
+2. **Server Action Guard Functions (`src/lib/auth/permissions.ts`)**:
+   - `requireUser()`: Ensures valid user context.
+   - `requireRole(roles)`: Enforces role-level clearance.
+   - `requireClubAdmin(clubId)`: Ensures a user is either a `SUPER_ADMIN` or has an active `LEAD` / `COORDINATOR` role for that specific club.
+3. **Signed QR Token Verification**:
+   - Admission tickets are signed using a server-side `QR_JWT_SECRET`.
+   - Scanners verify HMAC signature, expiration time, registration status, and event match before admitting students.
 
 ---
 
-## 🛠️ Getting Started
+## 📁 Project Directory Structure
 
-### 1. Prerequisites
-- Node.js 18+ or 20+
-- A Supabase project (PostgreSQL + Auth)
-
-### 2. Environment Variables Configuration
-Copy `.env.example` to `.env.local` and set your credentials:
-
-```bash
-cp .env.example .env.local
+```text
+campus-connect/
+├── prisma/
+│   ├── schema.prisma              # Complete PostgreSQL schema & relations
+│   └── seed.ts                    # Realistic campus seed dataset
+├── scripts/
+│   └── run-tests.ts               # Test suite runner
+├── src/
+│   ├── actions/                   # Server Actions
+│   │   ├── announcements.ts       # Post & manage announcements
+│   │   ├── auth.ts                # Login, signup, demo persona switching
+│   │   ├── clubs.ts               # Club creation & membership requests
+│   │   ├── events.ts              # Event scheduling & cancellation
+│   │   └── registrations.ts       # Ticketing & auto-waitlist engine
+│   ├── app/                       # Next.js App Router
+│   │   ├── (auth)/                # Login & Registration pages
+│   │   ├── (dashboard)/           # Protected portal pages
+│   │   │   ├── admin/             # Super Admin controls (clubs, users, broadcasts)
+│   │   │   ├── announcements/     # Campus feeds
+│   │   │   ├── clubs/             # Club directory & member dashboards
+│   │   │   ├── events/            # Event details, QR ticket, & camera scanner
+│   │   │   ├── my-clubs/          # Student membership manager
+│   │   │   ├── my-events/         # Student ticket & attendance history
+│   │   │   └── notifications/     # User notification inbox
+│   │   ├── api/                   # Route handlers
+│   │   │   ├── attendance/        # QR verification, manual check-in, CSV export
+│   │   │   └── notifications/     # Notification status updates
+│   │   └── layout.tsx             # Root layout with theme & persona switcher
+│   ├── components/                # Reusable UI components
+│   │   ├── clubs/                 # Club cards, forms, member roster
+│   │   ├── events/                # Event card, ticket view, QR scanner UI
+│   │   ├── layout/                # Navbar, sidebar, persona switcher
+│   │   ├── shared/                # Error boundaries, loading skeletons
+│   │   └── ui/                    # Base UI / shadcn design system
+│   ├── lib/                       # Utility libraries
+│   │   ├── auth/                  # RBAC permissions & session handlers
+│   │   ├── mock-db.ts             # Zero-setup in-memory database
+│   │   ├── prisma.ts              # Prisma client singleton
+│   │   ├── qr/                    # Token signing and QR generation
+│   │   └── supabase/              # Client & Server Supabase connectors
+│   ├── schemas/                   # Zod validation schemas
+│   └── types/                     # Shared TypeScript interfaces
+├── .env.example                   # Environment configuration template
+├── package.json
+└── README.md
 ```
-
-Required variables:
-```ini
-# Supabase Project Credentials
-NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
-SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
-
-# Database Connection (Postgres via Prisma)
-DATABASE_URL="postgresql://postgres:[password]@db.[project-ref].supabase.co:5432/postgres?pgbouncer=true"
-DIRECT_URL="postgresql://postgres:[password]@db.[project-ref].supabase.co:5432/postgres"
-
-# College Email Domain Restriction (Leave blank to permit any domain)
-ALLOWED_EMAIL_DOMAIN="college.edu"
-
-# QR Ticket Security Secret (at least 32 characters)
-QR_JWT_SECRET="super-secret-jwt-key-for-campus-connect-attendance-32chars"
-
-# App URL
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
-```
-
-### 3. Install Dependencies
-```bash
-npm install
-```
-
-### 4. Database Setup & Seeding
-Push the Prisma schema to your database and generate types:
-```bash
-npx prisma db push
-npx prisma generate
-```
-
-Seed realistic campus demo data (1 Super Admin, 3 Clubs with Admins, 20 Students, 10 Events, registrations, and announcements):
-```bash
-npm run seed
-```
-
-### 5. Run the Development Server
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🧪 Running Automated Tests
+## 🚀 Quick Start Guide
 
-Run the built-in test suite verifying role middleware permissions, waitlist capacity promotion logic, and QR token verification:
+### Option A: Run Instantly in Demo Mode (No Database Needed)
 
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/mraffankhan/Campus-Connect.git
+   cd Campus-Connect
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open [http://localhost:3000](http://localhost:3000)** in your browser:
+   - Use the **Demo Persona Switcher** dropdown in the navigation header to switch instantly between Student, Club Lead, and Super Admin.
+
+---
+
+### Option B: Full Production Setup with Supabase & PostgreSQL
+
+1. **Configure Environment Variables:**
+   ```bash
+   cp .env.example .env.local
+   ```
+   Fill in your credentials in `.env.local`:
+   ```ini
+   # Supabase Credentials
+   NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
+   NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
+   SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
+
+   # Database URLs (Supabase Postgres)
+   DATABASE_URL="postgresql://postgres:[password]@db.[project].supabase.co:5432/postgres?pgbouncer=true"
+   DIRECT_URL="postgresql://postgres:[password]@db.[project].supabase.co:5432/postgres"
+
+   # Optional: Restrict student signup to your college domain
+   ALLOWED_EMAIL_DOMAIN="college.edu"
+
+   # Cryptographic secret for signing QR passes (min 32 chars)
+   QR_JWT_SECRET="super-secret-jwt-key-for-campus-connect-attendance-32chars"
+
+   # App Base URL
+   NEXT_PUBLIC_APP_URL="http://localhost:3000"
+   ```
+
+2. **Sync Database Schema:**
+   ```bash
+   npx prisma db push
+   npx prisma generate
+   ```
+
+3. **Seed Database with Sample Data:**
+   ```bash
+   npm run seed
+   ```
+   *Populates the database with 1 Super Admin, 3 active clubs, 20 students, 10 events, registrations, and announcements.*
+
+4. **Run the Application:**
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 🧪 Automated Testing
+
+CampusConnect includes comprehensive test suites testing role permissions, waitlist queuing, and QR signature security.
+
+Run the test suite:
 ```bash
 npm test
 ```
 
-Test suite coverage:
-- `src/lib/auth/__tests__/permissions.test.ts` (Role guards, club admin boundaries, members-only checks)
-- `src/actions/__tests__/waitlist.test.ts` (Capacity limits, waitlist ordering, automatic cancellation promotion)
-- `src/lib/qr/__tests__/qr.test.ts` (JWT QR signature generation, expiration, tamper detection)
+### Verified Scenarios:
+- `permissions.test.ts`: Validates role barriers, Super Admin exclusivity on administrative routes, and club boundary isolation.
+- `waitlist.test.ts`: Validates event capacity limits, FIFO queue placement, and automatic waitlist promotion upon cancellation.
+- `qr.test.ts`: Validates HMAC token signature generation, expiration enforcement, and tamper rejection.
 
 ---
 
-## 🚢 Deploying to Vercel
+## 🚢 Production Deployment
 
-1. Push your repository to GitHub / GitLab / Bitbucket.
-2. Import the project in the [Vercel Dashboard](https://vercel.com/new).
-3. Set the Environment Variables listed in `.env.example`.
-4. Deploy! Next.js App Router and Prisma generate will automatically build and deploy the edge-ready application.
+Deploy seamlessly to [Vercel](https://vercel.com/):
+
+1. Push your repository to GitHub.
+2. Import the project into Vercel.
+3. Configure the environment variables specified in `.env.example`.
+4. Deploy! Next.js will build the application and Prisma will prepare edge-ready queries.
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+<div align="center">
+Made with ❤️ for university student communities everywhere.
+</div>

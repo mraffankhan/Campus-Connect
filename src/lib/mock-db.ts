@@ -201,11 +201,39 @@ function enrichClub(club: MockClub, include?: any, select?: any) {
   }
 
   if (include?.events) {
-    res.events = db.events.filter((e) => e.clubId === club.id);
+    let evts = db.events.filter((e) => e.clubId === club.id);
+    if (include.events.where) {
+      evts = evts.filter((e) => matchesWhere(e, include.events.where));
+    }
+    if (include.events.orderBy) {
+      evts = sortItems(evts, include.events.orderBy);
+    }
+    if (include.events.take) {
+      evts = evts.slice(0, include.events.take);
+    }
+    if (include.events.include || include.events.select) {
+      evts = evts.map((e) => enrichEvent(e, include.events.include, include.events.select));
+    }
+    res.events = evts;
   }
 
   if (include?.announcements) {
-    res.announcements = db.announcements.filter((a) => a.clubId === club.id);
+    let anns = db.announcements.filter((a) => a.clubId === club.id);
+    if (include.announcements.where) {
+      anns = anns.filter((a) => matchesWhere(a, include.announcements.where));
+    }
+    if (include.announcements.orderBy) {
+      anns = sortItems(anns, include.announcements.orderBy);
+    }
+    if (include.announcements.take) {
+      anns = anns.slice(0, include.announcements.take);
+    }
+    if (include.announcements.include || include.announcements.select) {
+      anns = anns.map((a) =>
+        enrichAnnouncement(a, include.announcements.include, include.announcements.select)
+      );
+    }
+    res.announcements = anns;
   }
 
   if (select) {
@@ -819,6 +847,9 @@ export const mockPrisma = {
       return { count: initial - db.notifications.length };
     },
   },
+
+  $connect: async () => {},
+  $disconnect: async () => {},
 
   $transaction: async (callbackOrArray: any) => {
     if (typeof callbackOrArray === "function") {
