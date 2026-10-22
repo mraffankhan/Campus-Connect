@@ -13,6 +13,8 @@ import {
   GraduationCap,
   Wrench,
   ShieldAlert,
+  Radio,
+  Lock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +31,7 @@ import {
 import { loginSchema, type LoginInput } from "@/schemas/auth";
 import { login, switchDemoUser } from "@/actions/auth";
 import { toast } from "sonner";
+import { DragonParticles } from "@/components/shared/dragon-particles";
 
 const QUICK_DEMO_USERS = [
   {
@@ -39,7 +42,7 @@ const QUICK_DEMO_USERS = [
     title: "Student (Freshman)",
     description: "Browse clubs, register for events, view QR tickets",
     icon: GraduationCap,
-    badgeColor: "border-blue-500/30 text-blue-500 bg-blue-500/10",
+    badgeColor: "border-primary/40 text-rose-300 bg-primary/15",
     destination: "/home",
   },
   {
@@ -50,7 +53,7 @@ const QUICK_DEMO_USERS = [
     title: "Club Admin (ACM Chapter)",
     description: "Manage members, create events, camera QR scanner",
     icon: Wrench,
-    badgeColor: "border-amber-500/30 text-amber-500 bg-amber-500/10",
+    badgeColor: "border-primary/40 text-rose-300 bg-primary/15",
     destination: "/clubs/acm-student-chapter",
   },
   {
@@ -61,7 +64,7 @@ const QUICK_DEMO_USERS = [
     title: "Super Admin (Dean)",
     description: "Approve clubs, college broadcasts, system metrics",
     icon: ShieldAlert,
-    badgeColor: "border-rose-500/30 text-rose-500 bg-rose-500/10",
+    badgeColor: "border-primary/60 text-white bg-primary/30",
     destination: "/admin",
   },
 ];
@@ -97,7 +100,7 @@ export default function LoginPage() {
         return;
       }
 
-      toast.success("Welcome back!");
+      toast.success("Welcome back to CampusConnect!");
       router.push("/home");
       router.refresh();
     } catch {
@@ -120,7 +123,7 @@ export default function LoginPage() {
     try {
       const res = await switchDemoUser(userId);
       if (res.success) {
-        toast.success(`Logged in as ${name}!`);
+        toast.success(`Authenticated as ${name}!`);
         router.push(dest);
         router.refresh();
       } else {
@@ -134,38 +137,43 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-radial-[at_top_right] from-primary/10 via-background to-background relative overflow-hidden">
-      {/* Ambient background blur */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-background">
+      <DragonParticles />
 
-      <Card className="w-full max-w-lg border-border/60 shadow-xl backdrop-blur-xl bg-card/85 relative z-10 my-8">
-        <CardHeader className="space-y-2 text-center pb-4">
-          <div className="flex justify-center mb-1">
-            <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <Sparkles className="h-6 w-6 text-white" />
+      {/* Volcanic Ambient Glow */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="w-full max-w-lg relative z-10 my-8">
+        <div className="tactical-card p-6 sm:p-8 rounded-2xl border-2 border-primary/40 bg-[#090102]/95 backdrop-blur-2xl shadow-[0_0_50px_rgba(240,0,16,0.35),0_30px_60px_-15px_rgba(0,0,0,0.9)] space-y-6">
+          {/* Header */}
+          <div className="text-center space-y-2">
+            <div className="flex justify-center mb-2">
+              <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-[0_0_20px_#f00010]">
+                <Sparkles className="h-6 w-6 text-white" />
+              </div>
             </div>
+            <div className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-primary px-3 py-1 rounded-full border border-primary/30 bg-primary/10">
+              <Radio className="w-3 h-3 text-primary animate-pulse" />
+              <span>// AUTHENTICATION TERMINAL</span>
+            </div>
+            <h1 className="font-heading font-extrabold text-2xl sm:text-3xl uppercase tracking-tight text-white">
+              Campus<span className="text-primary">Connect</span>
+            </h1>
+            <p className="font-mono text-xs text-muted-foreground">
+              Select an instant 1-click test persona or sign in with credentials
+            </p>
           </div>
-          <CardTitle className="text-2xl font-bold tracking-tight">
-            Welcome to <span className="text-gradient">CampusConnect</span>
-          </CardTitle>
-          <CardDescription>
-            Select a demo persona to test instantly in the browser with full features
-          </CardDescription>
-        </CardHeader>
 
-        <CardContent className="space-y-5">
-          {/* ─── One-Click Quick Demo Personas ──────────────────────────── */}
-          <div className="space-y-2.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+          {/* 1-Click Demo Personas */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+              <span className="flex items-center gap-1.5 text-rose-300 font-semibold">
                 <Sparkles className="h-3.5 w-3.5 text-primary" /> Instant 1-Click Personas
               </span>
-              <Badge variant="outline" className="text-[10px] text-primary border-primary/30">
-                Ready to explore
-              </Badge>
+              <span className="text-primary text-[10px]">[TEST PASS]</span>
             </div>
 
-            <div className="grid grid-cols-1 gap-2.5">
+            <div className="space-y-2.5">
               {QUICK_DEMO_USERS.map((demo) => {
                 const Icon = demo.icon;
                 const isSelected = demoLoadingId === demo.id;
@@ -178,11 +186,11 @@ export default function LoginPage() {
                     onClick={() =>
                       handleQuickDemoLogin(demo.id, demo.name, demo.email, demo.destination)
                     }
-                    className="w-full text-left p-3 rounded-xl border border-border/80 bg-background/60 hover:bg-primary/5 hover:border-primary/40 transition-all flex items-center justify-between group cursor-pointer"
+                    className="w-full text-left p-3.5 rounded-xl border border-primary/25 bg-[#0e0204] hover:bg-primary/15 hover:border-primary transition-all flex items-center justify-between group cursor-pointer shadow-[inset_0_1px_0_rgba(240,0,16,0.15)] hover:shadow-[0_0_20px_rgba(240,0,16,0.3)]"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div
-                        className={`w-9 h-9 rounded-lg border ${demo.badgeColor} flex items-center justify-center shrink-0`}
+                        className={`w-9 h-9 rounded-lg border ${demo.badgeColor} flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(240,0,16,0.25)]`}
                       >
                         {isSelected ? (
                           <Loader2 className="h-4 w-4 animate-spin text-primary" />
@@ -192,101 +200,106 @@ export default function LoginPage() {
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors truncate">
+                          <span className="font-heading font-bold uppercase text-sm text-white group-hover:text-primary transition-colors truncate">
                             {demo.name}
                           </span>
-                          <Badge
-                            variant="outline"
-                            className={`text-[9px] px-1.5 py-0 uppercase font-mono ${demo.badgeColor}`}
-                          >
+                          <span className="font-mono text-[9px] uppercase px-1.5 py-0.5 rounded border border-primary/40 bg-primary/20 text-rose-200">
                             {demo.role.replace("_", " ")}
-                          </Badge>
+                          </span>
                         </div>
-                        <p className="text-xs text-muted-foreground truncate">{demo.description}</p>
+                        <p className="font-mono text-[11px] text-muted-foreground truncate">{demo.description}</p>
                       </div>
                     </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0 ml-2" />
                   </button>
                 );
               })}
             </div>
           </div>
 
+          {/* Divider */}
           <div className="relative flex items-center justify-center">
-            <div className="border-t border-border w-full" />
-            <span className="bg-card px-3 text-[11px] uppercase tracking-wider text-muted-foreground shrink-0 font-medium">
-              Or sign in with email
+            <div className="border-t border-primary/25 w-full" />
+            <span className="bg-[#090102] px-3 font-mono text-[10px] uppercase tracking-widest text-muted-foreground shrink-0 font-bold">
+              // OR EMAIL CREDENTIALS //
             </span>
-            <div className="border-t border-border w-full" />
+            <div className="border-t border-primary/25 w-full" />
           </div>
 
           {/* Standard Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {serverError && (
-              <div className="p-3 text-sm rounded-lg bg-destructive/10 border border-destructive/20 text-destructive flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 shrink-0" />
+              <div className="p-3 text-xs font-mono rounded-lg bg-primary/15 border border-primary/40 text-rose-300 flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 shrink-0 text-primary" />
                 <span>{serverError}</span>
               </div>
             )}
 
-            <div className="space-y-2">
-              <Label htmlFor="email">College Email</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                College Email
+              </Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="student@college.edu"
                 autoComplete="email"
                 disabled={isLoading || demoLoadingId !== null}
+                className="bg-[#0e0204] border-primary/30 text-white font-mono text-xs focus-visible:border-primary focus-visible:ring-primary shadow-[inset_0_1px_0_rgba(240,0,16,0.15)]"
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-xs text-destructive">{errors.email.message}</p>
+                <p className="text-xs font-mono text-rose-400">{errors.email.message}</p>
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                Password
+              </Label>
               <Input
                 id="password"
                 type="password"
                 placeholder="••••••••"
                 autoComplete="current-password"
                 disabled={isLoading || demoLoadingId !== null}
+                className="bg-[#0e0204] border-primary/30 text-white font-mono text-xs focus-visible:border-primary focus-visible:ring-primary shadow-[inset_0_1px_0_rgba(240,0,16,0.15)]"
                 {...register("password")}
               />
               {errors.password && (
-                <p className="text-xs text-destructive">{errors.password.message}</p>
+                <p className="text-xs font-mono text-rose-400">{errors.password.message}</p>
               )}
             </div>
 
             <Button
               type="submit"
-              className="w-full font-medium"
+              className="w-full font-mono text-xs uppercase tracking-wider h-11 bg-primary text-white font-bold border border-rose-400 shadow-[0_0_24px_rgba(240,0,16,0.65)] hover:bg-[#ff1a2b] transition-all cursor-pointer"
               disabled={isLoading || demoLoadingId !== null}
             >
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
+                  AUTHENTICATING...
                 </>
               ) : (
                 <>
-                  Sign In with Credentials <ArrowRight className="ml-2 h-4 w-4" />
+                  SIGN IN TO GRID <ArrowRight className="ml-2 h-4 w-4" />
                 </>
               )}
             </Button>
           </form>
-        </CardContent>
 
-        <CardFooter className="flex flex-col gap-2 pt-0">
-          <p className="text-xs text-center text-muted-foreground">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-primary font-semibold hover:underline">
-              Create student account
-            </Link>
-          </p>
-        </CardFooter>
-      </Card>
+          {/* Footer */}
+          <div className="pt-2 text-center border-t border-primary/20">
+            <p className="font-mono text-xs text-muted-foreground">
+              Need a campus account?{" "}
+              <Link href="/signup" className="text-primary font-bold hover:underline">
+                Register student pass &rarr;
+              </Link>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

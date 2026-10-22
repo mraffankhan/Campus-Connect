@@ -110,40 +110,37 @@ export function DemoPersonaSwitcher({
             variant="outline"
             size="sm"
             disabled={isSwitching}
-            className="h-8 gap-1.5 px-2.5 text-xs font-medium border-primary/30 hover:border-primary/60 bg-primary/5 hover:bg-primary/10 transition-all rounded-full"
+            className="h-8 gap-1.5 px-2.5 text-xs font-mono uppercase tracking-wider border-primary/40 hover:border-primary bg-primary/10 hover:bg-primary/20 text-white transition-all rounded-lg shadow-[inset_0_1px_0_rgba(240,0,16,0.2)]"
             id="demo-persona-switcher"
           >
             <Sparkles className="h-3.5 w-3.5 text-primary animate-pulse" />
-            <span className="hidden sm:inline text-muted-foreground">Demo:</span>
-            <span className="font-semibold text-foreground max-w-[120px] truncate">
+            <span className="hidden sm:inline text-rose-300">PASS:</span>
+            <span className="font-bold text-white max-w-[120px] truncate">
               {activePersona.name.split(" ")[0]}
             </span>
-            <Badge
-              variant="outline"
-              className="text-[9px] px-1 py-0 uppercase font-mono tracking-wider border-primary/20 bg-background/50"
-            >
+            <span className="text-[9px] px-1.5 py-0 uppercase font-mono font-bold border border-primary/50 bg-black/60 text-rose-200 rounded">
               {activePersona.role.replace("_", " ")}
-            </Badge>
-            <ChevronDown className="h-3 w-3 text-muted-foreground opacity-60 ml-0.5" />
+            </span>
+            <ChevronDown className="h-3 w-3 text-primary ml-0.5" />
           </Button>
         }
       />
 
-      <DropdownMenuContent align="end" className="w-80 p-2 shadow-2xl">
+      <DropdownMenuContent align="end" className="w-80 p-2 shadow-2xl bg-[#090102] border-primary/30 text-white">
         <DropdownMenuLabel className="px-2 py-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Switch Demo Persona
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary">
+              // SWITCH DEMO CLEARANCE
             </span>
-            <Badge variant="secondary" className="text-[10px]">
-              Instant Frontend Mode
-            </Badge>
+            <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-primary/20 text-rose-300 border border-primary/40">
+              1-CLICK TEST
+            </span>
           </div>
-          <p className="text-[11px] text-muted-foreground font-normal mt-0.5">
-            Test role permissions, waitlist mechanics, and admin tools in one click.
+          <p className="text-[11px] font-mono text-muted-foreground mt-0.5">
+            Test role permissions and admin tools instantly.
           </p>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator className="bg-primary/20" />
 
         <DropdownMenuGroup className="space-y-1">
           {PRIMARY_PERSONAS.map((persona) => {

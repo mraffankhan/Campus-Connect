@@ -81,50 +81,55 @@ export function Sidebar({ role, className }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "hidden lg:flex flex-col h-screen border-r border-sidebar-border bg-sidebar sticky top-0",
-        "transition-all duration-300 ease-in-out",
-        collapsed ? "w-[68px]" : "w-[260px]",
+        "hidden lg:flex flex-col h-screen border-r border-primary/20 bg-[#050001] sticky top-0 z-30",
+        "transition-all duration-300 ease-in-out shadow-[4px_0_24px_rgba(0,0,0,0.6)]",
+        collapsed ? "w-[72px]" : "w-[260px]",
         className
       )}
     >
-      {/* Logo */}
+      {/* Brand Header */}
       <div
         className={cn(
-          "flex items-center gap-2 px-4 h-16 border-b border-sidebar-border",
+          "flex items-center gap-3 px-4 h-16 border-b border-primary/20 bg-black/40",
           collapsed && "justify-center px-2"
         )}
       >
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg gradient-primary">
-          <Sparkles className="h-4 w-4 text-white" />
-        </div>
-        {!collapsed && (
-          <span className="font-bold text-lg tracking-tight text-gradient">
-            CampusConnect
-          </span>
-        )}
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-white shadow-[0_0_14px_#f00010] shrink-0">
+            <Sparkles className="h-4 w-4" />
+          </div>
+          {!collapsed && (
+            <span className="font-heading font-bold text-lg tracking-wider uppercase text-white group-hover:text-rose-100 transition-colors">
+              Campus<span className="text-primary group-hover:drop-shadow-[0_0_8px_#f00010]">Connect</span>
+            </span>
+          )}
+        </Link>
       </div>
 
-      {/* Navigation */}
+      {/* Navigation Links */}
       <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
+        {!collapsed && (
+          <p className="px-3 pb-2 text-[10px] font-mono uppercase tracking-widest text-muted-foreground/70">
+            // MAIN GRID
+          </p>
+        )}
+
         {navItems.map((item, index) => {
           const Icon = iconMap[item.icon] || Home;
           const active = isActive(item.href);
 
           // Add separator before admin section
-          if (
-            role === "SUPER_ADMIN" &&
-            index === studentNav.length
-          ) {
+          if (role === "SUPER_ADMIN" && index === studentNav.length) {
             return (
-              <div key="separator">
-                <Separator className="my-3 mx-1" />
+              <div key="separator" className="pt-2">
+                <Separator className="my-3 mx-1 bg-primary/20" />
                 <p
                   className={cn(
-                    "text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2",
-                    collapsed ? "text-center text-[10px]" : "px-3"
+                    "text-[10px] font-mono text-primary font-bold uppercase tracking-widest mb-2",
+                    collapsed ? "text-center text-[9px]" : "px-3"
                   )}
                 >
-                  {collapsed ? "•" : "Admin"}
+                  {collapsed ? "•••" : "// ADMIN SYSTEM"}
                 </p>
                 <NavLink
                   item={item}
@@ -148,23 +153,33 @@ export function Sidebar({ role, className }: SidebarProps) {
         })}
       </nav>
 
-      {/* Collapse toggle */}
-      <div className="border-t border-sidebar-border p-2">
+      {/* Tactical Status & Collapse toggle */}
+      <div className="border-t border-primary/20 p-2 space-y-2 bg-black/30">
+        {!collapsed && (
+          <div className="flex items-center justify-between px-3 py-1.5 rounded-md border border-primary/20 bg-primary/5 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+            <div className="flex items-center gap-1.5">
+              <span className="pulse-dot" />
+              <span>RADAR ONLINE</span>
+            </div>
+            <span className="text-primary font-semibold">V2.4</span>
+          </div>
+        )}
+
         <Button
           variant="ghost"
           size="sm"
           className={cn(
-            "w-full justify-center h-9 text-muted-foreground hover:text-foreground",
-            !collapsed && "justify-start"
+            "w-full justify-center h-9 text-muted-foreground hover:text-white hover:bg-primary/10 hover:border hover:border-primary/30 cursor-pointer transition-all",
+            !collapsed && "justify-start font-mono text-xs uppercase tracking-wider"
           )}
           onClick={() => setCollapsed(!collapsed)}
         >
           {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4 text-primary" />
           ) : (
             <>
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              <span className="text-sm">Collapse</span>
+              <ChevronLeft className="h-4 w-4 mr-2 text-primary" />
+              <span>Minimize Panel</span>
             </>
           )}
         </Button>
@@ -188,21 +203,24 @@ function NavLink({
     <Link
       href={item.href}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
-        "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-        active &&
-          "bg-sidebar-accent text-sidebar-primary shadow-sm",
-        !active && "text-sidebar-foreground/70",
-        collapsed && "justify-center px-2"
+        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 group/link",
+        active
+          ? "bg-primary/20 text-white font-semibold border-l-2 border-primary shadow-[0_0_18px_rgba(240,0,16,0.3)]"
+          : "text-foreground/75 hover:bg-primary/10 hover:text-white hover:translate-x-0.5",
+        collapsed && "justify-center px-2 hover:translate-x-0"
       )}
     >
       <Icon
         className={cn(
-          "h-4.5 w-4.5 shrink-0 transition-colors",
-          active && "text-sidebar-primary"
+          "h-4 w-4 shrink-0 transition-transform group-hover/link:scale-110",
+          active ? "text-primary drop-shadow-[0_0_8px_#f00010]" : "text-muted-foreground group-hover/link:text-primary"
         )}
       />
-      {!collapsed && <span>{item.label}</span>}
+      {!collapsed && (
+        <span className={cn("tracking-wide font-sans", active && "font-semibold")}>
+          {item.label}
+        </span>
+      )}
     </Link>
   );
 
@@ -210,7 +228,7 @@ function NavLink({
     return (
       <Tooltip>
         <TooltipTrigger render={linkContent} />
-        <TooltipContent side="right" className="font-medium">
+        <TooltipContent side="right" className="font-mono text-xs uppercase tracking-wider bg-black border-primary text-white">
           {item.label}
         </TooltipContent>
       </Tooltip>

@@ -70,32 +70,31 @@ export default async function ClubsPage({ searchParams }: ClubsPageProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-primary/20">
         <div>
-          <div className="flex items-center gap-2 text-primary text-xs font-semibold uppercase tracking-wider mb-1">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Campus Community</span>
+          <div className="flex items-center gap-2 text-primary font-mono text-[11px] font-semibold uppercase tracking-wider mb-1">
+            <span className="pulse-dot" />
+            <span>CAMPUS SOCIETIES DIRECTORY</span>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Explore Clubs</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Discover student societies, technical chapters, and interest groups
+          <h1 className="font-heading font-extrabold text-3xl sm:text-4xl uppercase tracking-tight text-white">
+            Explore Campus Clubs
+          </h1>
+          <p className="font-mono text-xs text-muted-foreground mt-0.5">
+            Discover student societies, technical chapters, esports squads, and cultural guilds
           </p>
         </div>
 
         <Link
           href="/clubs/new"
-          className={buttonVariants({
-            size: "sm",
-            className: "shrink-0 shadow-sm",
-          })}
+          className="font-mono text-xs uppercase tracking-wider px-4 py-2.5 rounded-md bg-primary text-white font-bold border border-rose-400 shadow-[0_0_18px_rgba(240,0,16,0.6)] hover:bg-[#ff1a2b] transition-all flex items-center gap-2"
         >
-          <Plus className="mr-1.5 h-4 w-4" />
-          Request New Club
+          <Plus className="h-4 w-4" />
+          Propose Society
         </Link>
       </div>
 
       {/* Search & Category Filter */}
-      <div className="p-4 rounded-xl border border-border bg-card/60 backdrop-blur-sm">
+      <div className="p-4 rounded-xl border border-primary/25 bg-[#090102] shadow-[inset_0_1px_0_rgba(240,0,16,0.15)]">
         <SearchFilter
           placeholder="Search clubs by name or keywords..."
           filterParamName="category"

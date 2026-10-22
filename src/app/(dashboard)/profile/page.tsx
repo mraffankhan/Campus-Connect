@@ -1,11 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth/get-session";
 import { ProfileForm } from "@/components/profile/profile-form";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { StudentPassCard } from "@/components/shared/student-pass-card";
 import { Badge } from "@/components/ui/badge";
-import { getInitials, formatDate } from "@/lib/utils";
-import { User, CheckCircle2, Heart, Calendar } from "lucide-react";
+import { ShieldCheck, Flame, Radio } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -25,94 +23,108 @@ export default async function ProfilePage() {
   const turnoutRate = confirmedRegs > 0 ? Math.round((attendances / confirmedRegs) * 100) : 100;
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
-      <div>
-        <h1 className="text-3xl font-extrabold tracking-tight">Student Profile</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          Manage your personal details and view your campus engagement metrics
+    <div className="space-y-6 max-w-5xl mx-auto">
+      <div className="pb-2 border-b border-primary/20">
+        <div className="flex items-center gap-2 text-primary font-mono text-[11px] font-semibold uppercase tracking-wider mb-1">
+          <span className="pulse-dot" />
+          <span>STUDENT CREDENTIAL TERMINAL</span>
+        </div>
+        <h1 className="font-heading font-extrabold text-3xl sm:text-4xl uppercase tracking-tight text-white">
+          Digital Student Pass & Profile
+        </h1>
+        <p className="font-mono text-xs text-muted-foreground mt-0.5">
+          Authoritative campus pass, club leadership roles, and attendance credentials
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Left Column: Avatar & Quick Info */}
-        <Card className="flex flex-col items-center p-6 text-center space-y-4">
-          <Avatar className="h-24 w-24 border-2 border-primary/20">
-            <AvatarImage src={user.avatarUrl || undefined} alt={user.name} />
-            <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
-              {getInitials(user.name)}
-            </AvatarFallback>
-          </Avatar>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Column: Interactive 3D Student ID Card from index.html */}
+        <div className="lg:col-span-5 flex flex-col items-center">
+          <StudentPassCard
+            name={user.name}
+            role={user.role.replace("_", " ")}
+            department={user.department || "General Engineering"}
+            year={user.year || "2026"}
+            studentId={`CC-${user.id.substring(user.id.length - 6).toUpperCase()}`}
+          />
 
-          <div className="space-y-1">
-            <h2 className="text-xl font-bold">{user.name}</h2>
-            <p className="text-xs text-muted-foreground">{user.email}</p>
-            <Badge variant="outline" className="text-xs mt-1">
-              {user.role.replace("_", " ")}
-            </Badge>
+          {/* Quick Metrics Under Card */}
+          <div className="w-full max-w-[340px] grid grid-cols-2 gap-3 mt-4">
+            <div className="tactical-card p-3 rounded-xl text-center">
+              <span className="font-heading font-extrabold text-2xl text-white block">
+                {turnoutRate}%
+              </span>
+              <span className="font-mono text-[10px] uppercase text-muted-foreground">
+                Attendance Rate
+              </span>
+            </div>
+            <div className="tactical-card p-3 rounded-xl text-center">
+              <span className="font-heading font-extrabold text-2xl text-white block">
+                {memberships.length}
+              </span>
+              <span className="font-mono text-[10px] uppercase text-muted-foreground">
+                Clubs Joined
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Columns: Edit Details & Club Roster */}
+        <div className="lg:col-span-7 space-y-6">
+          <div className="tactical-card p-6 rounded-2xl space-y-4">
+            <div>
+              <span className="font-mono text-[10px] uppercase tracking-widest text-primary font-bold block mb-1">
+                // REGISTRATION DATA
+              </span>
+              <h2 className="font-heading font-bold text-xl uppercase tracking-wide text-white">
+                Academic Information
+              </h2>
+              <p className="font-mono text-xs text-muted-foreground">
+                Update your department discipline and projected graduation year
+              </p>
+            </div>
+
+            <ProfileForm
+              initialDepartment={user.department}
+              initialYear={user.year}
+            />
           </div>
 
-          <div className="w-full pt-4 border-t border-border/60 grid grid-cols-2 gap-2 text-xs">
-            <div className="p-2.5 rounded-lg bg-muted/40 text-center">
-              <p className="font-bold text-lg text-primary">{turnoutRate}%</p>
-              <p className="text-[11px] text-muted-foreground">Attendance</p>
+          <div className="tactical-card p-6 rounded-2xl space-y-4">
+            <div>
+              <span className="font-mono text-[10px] uppercase tracking-widest text-primary font-bold block mb-1">
+                // AFFILIATIONS
+              </span>
+              <h2 className="font-heading font-bold text-xl uppercase tracking-wide text-white">
+                Active Club Memberships
+              </h2>
             </div>
-            <div className="p-2.5 rounded-lg bg-muted/40 text-center">
-              <p className="font-bold text-lg text-primary">{memberships.length}</p>
-              <p className="text-[11px] text-muted-foreground">Clubs Joined</p>
-            </div>
-          </div>
-        </Card>
 
-        {/* Right 2 Columns: Edit Details & Clubs */}
-        <div className="md:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Academic Information</CardTitle>
-              <CardDescription>Update your department and current study year</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ProfileForm
-                initialDepartment={user.department}
-                initialYear={user.year}
-              />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Your Clubs & Roles</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {memberships.length === 0 ? (
-                <p className="text-xs text-muted-foreground">You have not joined any clubs yet.</p>
-              ) : (
-                <div className="divide-y divide-border/60">
-                  {memberships.map((m) => (
-                    <div key={m.id} className="py-2.5 flex items-center justify-between gap-3 text-xs">
-                      <div>
-                        <p className="font-semibold text-sm">{m.club.name}</p>
-                        <p className="text-muted-foreground">{m.club.category || "General"}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge
-                          variant={m.role === "LEAD" ? "default" : "secondary"}
-                          className="text-[10px]"
-                        >
-                          {m.role}
-                        </Badge>
-                        <Badge
-                          variant={m.status === "APPROVED" ? "outline" : "secondary"}
-                          className="text-[10px]"
-                        >
-                          {m.status}
-                        </Badge>
-                      </div>
+            {memberships.length === 0 ? (
+              <p className="font-mono text-xs text-muted-foreground py-4 text-center">
+                You have not joined any campus societies yet.
+              </p>
+            ) : (
+              <div className="divide-y divide-primary/15 font-mono">
+                {memberships.map((m) => (
+                  <div key={m.id} className="py-3 flex items-center justify-between gap-3 text-xs">
+                    <div>
+                      <p className="font-heading font-bold text-sm uppercase text-white">{m.club.name}</p>
+                      <p className="text-[11px] text-muted-foreground">{m.club.category || "General Society"}</p>
                     </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] uppercase px-2 py-0.5 rounded border border-primary/40 bg-primary/20 text-rose-200 font-bold">
+                        {m.role}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {m.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

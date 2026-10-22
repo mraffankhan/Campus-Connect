@@ -80,50 +80,54 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-primary/20">
         <div>
-          <div className="flex items-center gap-2 text-primary text-xs font-semibold uppercase tracking-wider mb-1">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Campus Activities</span>
+          <div className="flex items-center gap-2 text-primary font-mono text-[11px] font-semibold uppercase tracking-wider mb-1">
+            <span className="pulse-dot" />
+            <span>CAMPUS EVENT RADAR</span>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Campus Events</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Discover workshops, hackathons, seminars, and networking sessions
+          <h1 className="font-heading font-extrabold text-3xl sm:text-4xl uppercase tracking-tight text-white">
+            Campus Events & Hackathons
+          </h1>
+          <p className="font-mono text-xs text-muted-foreground mt-0.5">
+            Discover workshops, esports qualifiers, hackathons, and guest seminars
           </p>
         </div>
 
         <Link
           href="/my-events"
-          className={buttonVariants({ variant: "outline", size: "sm" })}
+          className="font-mono text-xs uppercase tracking-wider px-4 py-2 rounded-md border border-primary/40 bg-primary/10 hover:border-primary text-white transition-all shadow-[inset_0_1px_0_rgba(240,0,16,0.2)] hover:shadow-[0_0_16px_rgba(240,0,16,0.35)]"
         >
-          My Registered Events
+          My Registered Passes &rarr;
         </Link>
       </div>
 
       {/* Tabs & Search */}
       <div className="space-y-3">
-        <div className="flex items-center gap-2 border-b border-border pb-3">
+        <div className="flex items-center gap-2 border-b border-primary/20 pb-3">
           <Link
             href="/events?tab=upcoming"
-            className={buttonVariants({
-              variant: tab === "upcoming" ? "default" : "outline",
-              size: "sm",
-            })}
+            className={`font-mono text-xs uppercase tracking-wider px-3.5 py-1.5 rounded-md transition-all ${
+              tab === "upcoming"
+                ? "bg-primary text-white font-bold border border-rose-400 shadow-[0_0_15px_rgba(240,0,16,0.5)]"
+                : "border border-primary/20 text-muted-foreground hover:text-white hover:bg-primary/10"
+            }`}
           >
             Upcoming Events
           </Link>
           <Link
             href="/events?tab=past"
-            className={buttonVariants({
-              variant: tab === "past" ? "default" : "outline",
-              size: "sm",
-            })}
+            className={`font-mono text-xs uppercase tracking-wider px-3.5 py-1.5 rounded-md transition-all ${
+              tab === "past"
+                ? "bg-primary text-white font-bold border border-rose-400 shadow-[0_0_15px_rgba(240,0,16,0.5)]"
+                : "border border-primary/20 text-muted-foreground hover:text-white hover:bg-primary/10"
+            }`}
           >
-            Past Events
+            Past Archives
           </Link>
         </div>
 
-        <div className="p-4 rounded-xl border border-border bg-card/60 backdrop-blur-sm">
+        <div className="p-4 rounded-xl border border-primary/25 bg-[#090102] shadow-[inset_0_1px_0_rgba(240,0,16,0.15)]">
           <SearchFilter placeholder="Search events by title, venue, or club name..." />
         </div>
       </div>

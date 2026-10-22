@@ -2,7 +2,6 @@ import Link from "next/link";
 import { requireSession } from "@/lib/auth/get-session";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Users,
@@ -13,6 +12,8 @@ import {
   Sparkles,
   MapPin,
   Clock,
+  Radio,
+  ShieldCheck,
 } from "lucide-react";
 import { formatDate, formatTime } from "@/lib/utils";
 
@@ -86,211 +87,230 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-8">
-      {/* Hero Welcome Banner */}
-      <div className="relative overflow-hidden rounded-2xl p-6 sm:p-8 gradient-subtle border border-border/80 shadow-sm">
-        <div className="relative z-10 max-w-2xl">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-3">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Welcome to your campus portal</span>
+      {/* Tactical Welcome Banner */}
+      <div className="relative overflow-hidden rounded-2xl p-6 sm:p-8 border border-primary/30 bg-gradient-to-r from-[#180204] via-[#090102] to-[#120103] shadow-[0_8px_30px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(240,0,16,0.25)]">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 max-w-3xl space-y-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 font-mono text-[11px] uppercase tracking-wider text-rose-300">
+            <span className="pulse-dot" />
+            <span>VERIFIED IDENTITY // {user.role.replace("_", " ")}</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-            Hello, <span className="text-gradient">{user.name}</span>!
+
+          <h1 className="font-heading text-3xl sm:text-5xl font-extrabold uppercase tracking-tight text-white leading-tight">
+            HELLO, <span className="text-crimson-gradient">{user.name}</span>
           </h1>
-          <p className="mt-2 text-muted-foreground text-sm sm:text-base leading-relaxed">
-            {user.department ? `${user.department} • Year ${user.year}` : "Student Portal"}
-            {" — "}Stay engaged with campus life, join your favorite clubs, and attend exciting college events.
+
+          <p className="font-mono text-xs sm:text-sm text-muted-foreground leading-relaxed">
+            {user.department ? `${user.department} // CLASS OF ${user.year}` : "CAMPUS PORTAL"}
+            {" — "}Real-time access to student societies, encrypted event registration passes, and campus broadcasts.
           </p>
 
-          <div className="mt-5 flex flex-wrap gap-3">
-            <Link href="/clubs" className={buttonVariants({ size: "sm" })}>
-              Explore Clubs <ArrowRight className="ml-1.5 h-4 w-4" />
+          <div className="pt-2 flex flex-wrap gap-3">
+            <Link
+              href="/clubs"
+              className="font-mono text-xs uppercase tracking-wider px-4 py-2.5 rounded-md bg-primary text-white font-bold border border-rose-400 shadow-[0_0_20px_rgba(240,0,16,0.6)] hover:bg-[#ff1a2b] transition-all flex items-center gap-2"
+            >
+              Explore Societies <ArrowRight className="h-3.5 w-3.5" />
             </Link>
             <Link
               href="/events"
-              className={buttonVariants({ variant: "outline", size: "sm" })}
+              className="font-mono text-xs uppercase tracking-wider px-4 py-2.5 rounded-md border border-primary/35 bg-primary/10 hover:border-primary text-white transition-all hover:shadow-[0_0_15px_rgba(240,0,16,0.3)]"
             >
               Upcoming Events
+            </Link>
+            <Link
+              href="/profile"
+              className="font-mono text-xs uppercase tracking-wider px-4 py-2.5 rounded-md border border-white/10 hover:border-white/30 text-muted-foreground hover:text-white transition-all"
+            >
+              View Pass
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Overview Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="hover:border-primary/40 transition-colors">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Joined Clubs
-            </CardTitle>
-            <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-              <Users className="h-5 w-5" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{myClubsCount}</div>
-            <p className="text-xs text-muted-foreground mt-1">Active memberships</p>
-          </CardContent>
-        </Card>
+      {/* Tactical Overview Stat Cards (Inspired by .stat in index.html) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="tactical-card p-5 rounded-xl space-y-2 group">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="font-mono text-[11px] uppercase tracking-wider">JOINED CLUBS</span>
+            <Users className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
+          </div>
+          <div className="font-heading font-extrabold text-3xl sm:text-4xl text-white group-hover:text-primary transition-colors">
+            {myClubsCount}
+          </div>
+          <p className="font-mono text-[10px] uppercase text-muted-foreground tracking-wider">
+            Active Memberships
+          </p>
+        </div>
 
-        <Card className="hover:border-primary/40 transition-colors">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Upcoming Events
-            </CardTitle>
-            <div className="h-9 w-9 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-              <Calendar className="h-5 w-5" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{upcomingRegistrations.length}</div>
-            <p className="text-xs text-muted-foreground mt-1">Confirmed registrations</p>
-          </CardContent>
-        </Card>
+        <div className="tactical-card p-5 rounded-xl space-y-2 group">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="font-mono text-[11px] uppercase tracking-wider">UPCOMING EVENTS</span>
+            <Calendar className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
+          </div>
+          <div className="font-heading font-extrabold text-3xl sm:text-4xl text-white group-hover:text-primary transition-colors">
+            {upcomingRegistrations.length}
+          </div>
+          <p className="font-mono text-[10px] uppercase text-muted-foreground tracking-wider">
+            Confirmed Passes
+          </p>
+        </div>
 
-        <Card className="hover:border-primary/40 transition-colors">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Attendance Record
-            </CardTitle>
-            <div className="h-9 w-9 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-              <CheckCircle2 className="h-5 w-5" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{attendanceRate}%</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {attendanceStats.attended} of {attendanceStats.total} events attended
-            </p>
-          </CardContent>
-        </Card>
+        <div className="tactical-card p-5 rounded-xl space-y-2 group">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="font-mono text-[11px] uppercase tracking-wider">ATTENDANCE RATE</span>
+            <CheckCircle2 className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
+          </div>
+          <div className="font-heading font-extrabold text-3xl sm:text-4xl text-white group-hover:text-primary transition-colors">
+            {attendanceRate}%
+          </div>
+          <p className="font-mono text-[10px] uppercase text-muted-foreground tracking-wider">
+            {attendanceStats.attended} of {attendanceStats.total} events verified
+          </p>
+        </div>
 
-        <Card className="hover:border-primary/40 transition-colors">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Portal Role
-            </CardTitle>
-            <div className="h-9 w-9 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-              <Megaphone className="h-5 w-5" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold capitalize">
-              {user.role.toLowerCase().replace("_", " ")}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">Access status</p>
-          </CardContent>
-        </Card>
+        <div className="tactical-card p-5 rounded-xl space-y-2 group">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="font-mono text-[11px] uppercase tracking-wider">ACCESS CLEARANCE</span>
+            <ShieldCheck className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
+          </div>
+          <div className="font-heading font-extrabold text-2xl sm:text-3xl uppercase text-white truncate group-hover:text-primary transition-colors">
+            {user.role.replace("_", " ")}
+          </div>
+          <p className="font-mono text-[10px] uppercase text-muted-foreground tracking-wider">
+            Cryptographic Clearance
+          </p>
+        </div>
       </div>
 
       {/* Two columns: Upcoming Events & Announcements */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Upcoming Events Column */}
-        <Card className="flex flex-col">
-          <CardHeader className="flex flex-row items-center justify-between pb-4">
-            <div>
-              <CardTitle className="text-lg">Your Upcoming Events</CardTitle>
-              <CardDescription>Events you are currently registered for</CardDescription>
-            </div>
-            <Link
-              href="/my-events"
-              className={buttonVariants({ variant: "ghost", size: "sm" })}
-            >
-              View all
-            </Link>
-          </CardHeader>
-          <CardContent className="flex-1 space-y-3">
-            {upcomingRegistrations.length === 0 ? (
-              <div className="py-8 text-center text-muted-foreground text-sm">
-                <Calendar className="h-8 w-8 mx-auto mb-2 opacity-40" />
-                <p>No upcoming events registered.</p>
-                <Link
-                  href="/events"
-                  className={buttonVariants({ variant: "link", size: "sm", className: "mt-1" })}
-                >
-                  Find campus events to attend
-                </Link>
+        <div className="tactical-card p-5 sm:p-6 rounded-2xl flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between pb-4 border-b border-primary/20 mb-4">
+              <div>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-primary font-bold block mb-1">
+                  // RADAR SCHEDULE
+                </span>
+                <h2 className="font-heading font-bold text-xl uppercase tracking-wide text-white">
+                  Your Event Passes
+                </h2>
               </div>
-            ) : (
-              upcomingRegistrations.map((reg) => (
-                <div
-                  key={reg.id}
-                  className="p-3.5 rounded-xl border border-border bg-card/60 hover:bg-muted/40 transition-colors flex items-center justify-between gap-3"
-                >
-                  <div className="space-y-1 min-w-0">
-                    <p className="text-sm font-semibold truncate">{reg.event.title}</p>
-                    <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3.5 w-3.5" />
-                        {formatDate(new Date(reg.event.startsAt))} • {formatTime(new Date(reg.event.startsAt))}
-                      </span>
-                      {reg.event.venue && (
+              <Link
+                href="/my-events"
+                className="font-mono text-xs uppercase tracking-wider text-rose-300 hover:text-white underline"
+              >
+                View all &rarr;
+              </Link>
+            </div>
+
+            <div className="space-y-3">
+              {upcomingRegistrations.length === 0 ? (
+                <div className="py-10 text-center text-muted-foreground">
+                  <Calendar className="h-8 w-8 mx-auto mb-2 text-primary/40" />
+                  <p className="font-mono text-xs uppercase tracking-wider">No active event tickets</p>
+                  <Link
+                    href="/events"
+                    className="font-mono text-xs uppercase tracking-wider text-primary underline mt-2 inline-block font-semibold"
+                  >
+                    Browse Campus Events &rarr;
+                  </Link>
+                </div>
+              ) : (
+                upcomingRegistrations.map((reg) => (
+                  <div
+                    key={reg.id}
+                    className="p-3.5 rounded-xl border border-primary/25 bg-[#0e0204] hover:border-primary/50 transition-all flex items-center justify-between gap-3 shadow-[inset_0_1px_0_rgba(240,0,16,0.15)] group"
+                  >
+                    <div className="space-y-1 min-w-0">
+                      <p className="font-heading font-bold uppercase text-sm text-white truncate group-hover:text-primary transition-colors">
+                        {reg.event.title}
+                      </p>
+                      <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-muted-foreground">
                         <span className="flex items-center gap-1">
-                          <MapPin className="h-3.5 w-3.5" />
-                          {reg.event.venue}
+                          <Clock className="h-3.5 w-3.5 text-primary" />
+                          {formatDate(new Date(reg.event.startsAt))} • {formatTime(new Date(reg.event.startsAt))}
+                        </span>
+                        {reg.event.venue && (
+                          <span className="flex items-center gap-1">
+                            <MapPin className="h-3.5 w-3.5 text-primary" />
+                            {reg.event.venue}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <Link
+                      href={`/events/${reg.event.id}`}
+                      className="font-mono text-[11px] uppercase tracking-wider px-3 py-1.5 rounded bg-primary/20 text-white border border-primary/40 hover:bg-primary hover:border-primary transition-all shrink-0 font-bold"
+                    >
+                      Ticket
+                    </Link>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Announcements Column */}
+        <div className="tactical-card p-5 sm:p-6 rounded-2xl flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between pb-4 border-b border-primary/20 mb-4">
+              <div>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-primary font-bold block mb-1">
+                  // TELEMETRY
+                </span>
+                <h2 className="font-heading font-bold text-xl uppercase tracking-wide text-white">
+                  Campus Broadcasts
+                </h2>
+              </div>
+              <Link
+                href="/announcements"
+                className="font-mono text-xs uppercase tracking-wider text-rose-300 hover:text-white underline"
+              >
+                View all &rarr;
+              </Link>
+            </div>
+
+            <div className="space-y-3">
+              {recentAnnouncements.length === 0 ? (
+                <div className="py-10 text-center text-muted-foreground">
+                  <Megaphone className="h-8 w-8 mx-auto mb-2 text-primary/40" />
+                  <p className="font-mono text-xs uppercase tracking-wider">No active announcements</p>
+                </div>
+              ) : (
+                recentAnnouncements.map((ann) => (
+                  <div
+                    key={ann.id}
+                    className="p-3.5 rounded-xl border border-primary/25 bg-[#0e0204] hover:border-primary/50 transition-all space-y-1.5 shadow-[inset_0_1px_0_rgba(240,0,16,0.15)]"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <h4 className="font-heading font-bold uppercase text-sm text-white truncate">
+                        {ann.title}
+                      </h4>
+                      {ann.pinned && (
+                        <span className="font-mono text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/20 border border-primary/50 text-rose-200">
+                          PINNED
                         </span>
                       )}
                     </div>
+                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                      {ann.body}
+                    </p>
+                    <div className="text-[11px] font-mono text-muted-foreground pt-1 flex items-center justify-between border-t border-primary/15">
+                      <span className="text-primary font-medium">
+                        {ann.club ? ann.club.name : "College-wide Broadcast"}
+                      </span>
+                      <span>{formatDate(new Date(ann.createdAt))}</span>
+                    </div>
                   </div>
-                  <Link
-                    href={`/events/${reg.event.id}`}
-                    className={buttonVariants({ size: "sm", variant: "secondary", className: "shrink-0" })}
-                  >
-                    View
-                  </Link>
-                </div>
-              ))
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Announcements Column */}
-        <Card className="flex flex-col">
-          <CardHeader className="flex flex-row items-center justify-between pb-4">
-            <div>
-              <CardTitle className="text-lg">Campus Announcements</CardTitle>
-              <CardDescription>Updates from administration and joined clubs</CardDescription>
+                ))
+              )}
             </div>
-            <Link
-              href="/announcements"
-              className={buttonVariants({ variant: "ghost", size: "sm" })}
-            >
-              View all
-            </Link>
-          </CardHeader>
-          <CardContent className="flex-1 space-y-3">
-            {recentAnnouncements.length === 0 ? (
-              <div className="py-8 text-center text-muted-foreground text-sm">
-                <Megaphone className="h-8 w-8 mx-auto mb-2 opacity-40" />
-                <p>No announcements yet.</p>
-              </div>
-            ) : (
-              recentAnnouncements.map((ann) => (
-                <div
-                  key={ann.id}
-                  className="p-3.5 rounded-xl border border-border bg-card/60 hover:bg-muted/40 transition-colors space-y-1.5"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <h4 className="text-sm font-semibold truncate">{ann.title}</h4>
-                    {ann.pinned && (
-                      <Badge variant="secondary" className="text-[10px] uppercase">
-                        Pinned
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-xs text-muted-foreground line-clamp-2">
-                    {ann.body}
-                  </p>
-                  <div className="text-[11px] text-muted-foreground pt-1 flex items-center justify-between">
-                    <span>
-                      {ann.club ? ann.club.name : "College-wide"}
-                    </span>
-                    <span>{formatDate(new Date(ann.createdAt))}</span>
-                  </div>
-                </div>
-              ))
-            )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
